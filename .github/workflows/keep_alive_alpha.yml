@@ -1,0 +1,29 @@
+name: 24/7 Keep-Alive Sentinel (Alpha)
+
+on:
+  schedule:
+    - cron: '0,10,20,30,40,50 * * * *'
+  workflow_dispatch:
+
+jobs:
+  ping_render:
+    name: External Keep-Alive Ping (Alpha)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Ping CBA-Bot Health Check
+        run: |
+          echo "Pinging CBA-Bot on Render..."
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" -m 45 "https://cba-bot-pkp0.onrender.com/health")
+          echo "HTTP Status: $STATUS"
+          if [ "$STATUS" -ne 200 ]; then
+            echo "Non-200 or cold-start, retrying in 10s..."
+            sleep 10
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" -m 45 "https://cba-bot-pkp0.onrender.com/health")
+            echo "Retry HTTP Status: $STATUS"
+          fi
+          if [ "$STATUS" -eq 200 ]; then
+            echo "SUCCESS: CBA-Bot is ONLINE and active!"
+          else
+            echo "WARNING: Health check returned non-200 status $STATUS"
+          fi
