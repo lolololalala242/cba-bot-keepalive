@@ -14,12 +14,12 @@ jobs:
       - name: Ping CBA-Bot Health Check
         run: |
           echo "Pinging CBA-Bot on Render..."
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" -m 45 "https://cba-bot-pkp0.onrender.com/health")
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" -m 45 "https://cba-bot-live.onrender.com/health")
           echo "HTTP Status: $STATUS"
           if [ "$STATUS" -ne 200 ]; then
             echo "Non-200 or cold-start, retrying in 10s..."
             sleep 10
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" -m 45 "https://cba-bot-pkp0.onrender.com/health")
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" -m 45 "https://cba-bot-live.onrender.com/health")
             echo "Retry HTTP Status: $STATUS"
           fi
           if [ "$STATUS" -eq 200 ]; then
